@@ -1,0 +1,18 @@
+export const tracks = [
+  { id: 1, title: 'Guilt', author: 'Nero', album: 'Welcome Reality', duration: '4:44', suffix: '' },
+  { id: 2, title: 'Elektro', author: 'Dynoro, Outwork, Mr. Gee', album: 'Elektro', duration: '2:22', suffix: '' },
+  { id: 3, title: 'I’m Fire', author: 'Ali Bakgor', album: 'I’m Fire', duration: '2:22', suffix: '' },
+  { id: 4, title: 'Non Stop', author: 'Стоункат, Psychopath', album: 'Non Stop', duration: '4:12', suffix: '(Remix)' },
+  { id: 5, title: 'Run Run', author: 'Jaded, Will Clarke, AR/CO', album: 'Run Run', duration: '2:54', suffix: '(feat. AR/CO)' },
+  { id: 6, title: 'Eyes on Fire', author: 'Blue Foundation, Zeds Dead', album: 'Eyes on Fire', duration: '5:20', suffix: '(Zeds Dead Remix)' },
+  { id: 7, title: 'Mucho Bien', author: 'HYBIT, Mr. Black, Offer Nissim, Hi Profile', album: 'Mucho Bien', duration: '3:41', suffix: '(Hi Profile Remix)' },
+  { id: 8, title: 'Knives n Cherries', author: 'minthaze', album: 'Captivating', duration: '1:48', suffix: '' },
+  { id: 9, title: 'Knives n Cherries', author: 'minthaze', album: 'Captivating', duration: '1:48', suffix: '' },
+  { id: 10, title: 'Knives n Cherries', author: 'minthaze', album: 'Captivating', duration: '1:48', suffix: '' },
+  { id: 11, title: 'Knives n Cherries', author: 'minthaze', album: 'Captivating', duration: '1:48', suffix: '' },
+  { id: 12, title: 'Knives n Cherries', author: 'minthaze', album: 'Captivating', duration: '1:48', suffix: '' },
+  { id: 13, title: 'Knives n Cherries', author: 'minthaze', album: 'Captivating', duration: '1:48', suffix: '' },
+  { id: 14, title: 'Knives n Cherries', author: 'minthaze', album: 'Captivating', duration: '1:48', suffix: '' },
+  { id: 15, title: 'How Deep Is Your Love', author: 'Calvin Harris, Disciples', album: 'How Deep Is Your Love', duration: '3:32', suffix: '' },
+  { id: 16, title: 'Morena', author: 'Tom Boxer', album: 'Soundz Made in Romania', duration: '3:36', suffix: '' },
+]
