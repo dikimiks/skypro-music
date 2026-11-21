@@ -56,8 +56,11 @@ import { tracks } from '~/data/tracks.js'
 </script>
 
 <style scoped>
-* {
-  box-sizing: border-box;
+@font-face {
+  font-family: "StratosSkyeng";
+  src: url("/fonts/StratosSkyeng.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
 }
 
 .wrapper {
@@ -66,7 +69,7 @@ import { tracks } from '~/data/tracks.js'
   overflow: hidden;
   background-color: #383838;
   color: #ffffff;
-  font-family: "Montserrat", sans-serif;
+  font-family: "StratosSkyeng", sans-serif;
 }
 
 .container {
@@ -87,7 +90,7 @@ import { tracks } from '~/data/tracks.js'
 .main__centerblock {
   width: auto;
   flex-grow: 3;
-  padding: 20px 40px 20px 111px;
+  padding: 20px 40px 20px 50px;
 }
 
 .main__sidebar {
@@ -98,16 +101,16 @@ import { tracks } from '~/data/tracks.js'
 .centerblock__search {
   width: 100%;
   border-bottom: 1px solid #4e4e4e;
-  margin-bottom: 51px;
+  margin-bottom: 50px;
   display: flex;
   align-items: center;
 }
 
 .centerblock__h2 {
   font-weight: 400;
-  font-size: 64px;
-  line-height: 72px;
-  letter-spacing: -0.8px;
+  font-size: 60px;
+  line-height: 64px;
+  letter-spacing: -0.78px;
   margin: 0 0 45px;
 }
 
