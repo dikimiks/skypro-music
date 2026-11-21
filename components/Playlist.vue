@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="content__playlist playlist">
-      <Track v-for="track in tracks" :key="track.id" :track="track" />
+      <Track v-for="track in tracks" :key="track._id" :track="track" />
     </div>
   </div>
 </template>

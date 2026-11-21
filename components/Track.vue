@@ -8,10 +8,7 @@
           </svg>
         </div>
         <div class="track__title-text">
-          <a class="track__title-link" href="#">
-            {{ track.title }}
-            <span class="track__title-span">{{ track.suffix }}</span>
-          </a>
+          <a class="track__title-link" href="#">{{ track.name }}</a>
         </div>
       </div>
       <div class="track__author">
@@ -24,18 +21,28 @@
         <svg class="track__time-svg">
           <use href="/img/icon/sprite.svg#icon-like"></use>
         </svg>
-        <span class="track__time-text">{{ track.duration }}</span>
+        <span class="track__time-text">{{ formattedDuration }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   track: {
     type: Object,
     required: true,
   },
+})
+
+const formattedDuration = computed(() => {
+  const seconds = props.track.duration_in_seconds
+
+  if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds < 0) {
+    return ''
+  }
+
+  return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`
 })
 </script>
 
