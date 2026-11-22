@@ -14,8 +14,19 @@
 
           <h2 class="centerblock__h2">Треки</h2>
 
-          <FilterControls />
-          <Playlist :tracks="tracks" />
+          <FilterControls
+            :authors="authors"
+            :years="years"
+            :genres="genres"
+            v-model:author="selectedAuthor"
+            v-model:year="selectedYear"
+            v-model:genre="selectedGenre"
+          />
+          <p v-if="pending" class="centerblock__status" role="status">Загрузка…</p>
+          <p v-else-if="requestFailed" class="centerblock__status" role="alert">
+            Не удалось загрузить треки. Попробуйте обновить страницу.
+          </p>
+          <Playlist v-else :tracks="filteredTracks" />
         </section>
 
         <aside class="main__sidebar sidebar">
@@ -52,7 +63,66 @@
 </template>
 
 <script setup>
-import { tracks } from '~/data/tracks.js'
+const { data: response, pending, error } = await useFetch(
+  'https://webdev-music-003b5b991590.herokuapp.com/catalog/track/all/',
+)
+
+const selectedAuthor = ref('')
+const selectedYear = ref('')
+const selectedGenre = ref('')
+
+const tracks = computed(() => {
+  const data = response.value?.data
+  return Array.isArray(data) ? data : []
+})
+
+const requestFailed = computed(
+  () =>
+    Boolean(error.value) ||
+    response.value?.success !== true ||
+    !Array.isArray(response.value?.data),
+)
+
+const authors = computed(() =>
+  [...new Set(
+    tracks.value
+      .map((track) => track.author)
+      .filter((author) => typeof author === 'string' && author.trim()),
+  )].sort((a, b) => a.localeCompare(b)),
+)
+
+const years = computed(() =>
+  [...new Set(
+    tracks.value
+      .map((track) =>
+        typeof track.release_date === 'string' &&
+        /^\d{4}-\d{2}-\d{2}$/.test(track.release_date)
+          ? track.release_date.slice(0, 4)
+          : '',
+      )
+      .filter(Boolean),
+  )].sort((a, b) => Number(b) - Number(a)),
+)
+
+const genres = computed(() =>
+  [...new Set(
+    tracks.value
+      .flatMap((track) => (Array.isArray(track.genre) ? track.genre : []))
+      .filter((genre) => typeof genre === 'string' && genre.trim()),
+  )].sort((a, b) => a.localeCompare(b)),
+)
+
+const filteredTracks = computed(() =>
+  tracks.value.filter(
+    (track) =>
+      (!selectedAuthor.value || track.author === selectedAuthor.value) &&
+      (!selectedYear.value ||
+        (typeof track.release_date === 'string' &&
+          track.release_date.startsWith(selectedYear.value))) &&
+      (!selectedGenre.value ||
+        (Array.isArray(track.genre) && track.genre.includes(selectedGenre.value))),
+  ),
+)
 </script>
 
 <style scoped>
@@ -104,6 +174,11 @@ import { tracks } from '~/data/tracks.js'
   margin-bottom: 50px;
   display: flex;
   align-items: center;
+}
+
+.centerblock__status {
+  font-size: 16px;
+  line-height: 24px;
 }
 
 .centerblock__h2 {

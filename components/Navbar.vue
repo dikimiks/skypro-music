@@ -3,12 +3,19 @@
     <div class="nav__logo logo">
       <img class="logo__image" src="/img/logo.png" alt="Skypro" />
     </div>
-    <div class="nav__burger burger">
+    <button
+      type="button"
+      class="nav__burger burger"
+      :aria-expanded="isMenuOpen"
+      :aria-label="isMenuOpen ? 'Закрыть меню' : 'Открыть меню'"
+      aria-controls="main-menu"
+      @click="isMenuOpen = !isMenuOpen"
+    >
       <span class="burger__line"></span>
       <span class="burger__line"></span>
       <span class="burger__line"></span>
-    </div>
-    <div class="nav__menu menu">
+    </button>
+    <div v-if="isMenuOpen" id="main-menu" class="nav__menu menu">
       <ul class="menu__list">
         <li class="menu__item">
           <a href="#" class="menu__link">Главное</a>
@@ -23,6 +30,10 @@
     </div>
   </nav>
 </template>
+
+<script setup>
+const isMenuOpen = ref(false)
+</script>
 
 <style scoped>
 .main__nav {
@@ -50,9 +61,12 @@
   width: 20px;
   height: 36px;
   padding: 13px 0;
+  border: 0;
+  background: transparent;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  cursor: pointer;
 }
 
 .burger__line {
