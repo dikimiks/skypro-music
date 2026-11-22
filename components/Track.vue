@@ -8,7 +8,7 @@
           </svg>
         </div>
         <div class="track__title-text">
-          <a class="track__title-link" href="#">
+          <a class="track__title-link" href="#" @click.prevent="player.selectTrack(track)">
             {{ track.title }}
             <span class="track__title-span">{{ track.suffix }}</span>
           </a>
@@ -31,6 +31,10 @@
 </template>
 
 <script setup>
+import { usePlayerStore } from '~/store/player'
+
+const player = usePlayerStore()
+
 defineProps({
   track: {
     type: Object,

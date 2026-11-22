@@ -63,7 +63,7 @@ import { tracks } from '~/data/tracks.js'
 .wrapper {
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: clip;
   background-color: #383838;
   color: #ffffff;
   font-family: "Montserrat", sans-serif;
@@ -71,14 +71,15 @@ import { tracks } from '~/data/tracks.js'
 
 .container {
   max-width: 1920px;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0 auto;
   position: relative;
+  padding-bottom: 78px;
   background-color: #181818;
 }
 
 .main {
-  min-height: 100%;
+  min-height: calc(100vh - 78px);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
