@@ -9,7 +9,12 @@
             <svg class="search__svg">
               <use href="/img/icon/sprite.svg#icon-search"></use>
             </svg>
-            <input class="search__text" type="search" placeholder="Поиск" name="search" />
+            <input
+              class="search__text"
+              type="search"
+              placeholder="Поиск"
+              name="search"
+            />
           </div>
 
           <h2 class="centerblock__h2">Треки</h2>
@@ -27,17 +32,29 @@
             <ul class="sidebar__list">
               <li class="sidebar__item">
                 <a href="#" class="sidebar__link">
-                  <img class="sidebar__img" src="/img/playlist01.png" alt="Плейлист" />
+                  <img
+                    class="sidebar__img"
+                    src="/img/playlist01.png"
+                    alt="Плейлист"
+                  />
                 </a>
               </li>
               <li class="sidebar__item">
                 <a href="#" class="sidebar__link">
-                  <img class="sidebar__img" src="/img/playlist02.png" alt="Плейлист" />
+                  <img
+                    class="sidebar__img"
+                    src="/img/playlist02.png"
+                    alt="Плейлист"
+                  />
                 </a>
               </li>
               <li class="sidebar__item">
                 <a href="#" class="sidebar__link">
-                  <img class="sidebar__img" src="/img/playlist03.png" alt="Плейлист" />
+                  <img
+                    class="sidebar__img"
+                    src="/img/playlist03.png"
+                    alt="Плейлист"
+                  />
                 </a>
               </li>
             </ul>
@@ -52,21 +69,28 @@
 </template>
 
 <script setup>
-import Navbar from './components/Navbar.vue'
-import FilterControls from './components/FilterControls.vue'
-import Playlist from './components/Playlist.vue'
-import PlayerBar from './components/PlayerBar.vue'
-import { tracks } from './data/tracks.js'
+import Navbar from "./components/Navbar.vue";
+import FilterControls from "./components/FilterControls.vue";
+import Playlist from "./components/Playlist.vue";
+import PlayerBar from "./components/PlayerBar.vue";
+import { tracks } from "./data/tracks.js";
 </script>
 
 <style scoped>
+@font-face {
+  font-family: "StratosSkyeng";
+  src: url("/fonts/StratosSkyeng.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
 .wrapper {
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
   background-color: #383838;
   color: #ffffff;
-  font-family: "Montserrat", sans-serif;
+  font-family: "StratosSkyeng", sans-serif;
 }
 
 .container {
@@ -87,7 +111,7 @@ import { tracks } from './data/tracks.js'
 .main__centerblock {
   width: auto;
   flex-grow: 3;
-  padding: 20px 40px 20px 111px;
+  padding: 20px 40px 20px 50px;
 }
 
 .main__sidebar {
@@ -98,16 +122,16 @@ import { tracks } from './data/tracks.js'
 .centerblock__search {
   width: 100%;
   border-bottom: 1px solid #4e4e4e;
-  margin-bottom: 51px;
+  margin-bottom: 50px;
   display: flex;
   align-items: center;
 }
 
 .centerblock__h2 {
   font-weight: 400;
-  font-size: 64px;
-  line-height: 72px;
-  letter-spacing: -0.8px;
+  font-size: 60px;
+  line-height: 64px;
+  letter-spacing: -0.78px;
   margin: 0 0 45px;
 }
 

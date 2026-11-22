@@ -14,10 +14,10 @@
           <a href="#" class="menu__link">Главное</a>
         </li>
         <li class="menu__item">
-          <a href="#" class="menu__link">Мой плейлист</a>
+          <a href="#" class="menu__link">Мои треки</a>
         </li>
         <li class="menu__item">
-          <a href="#" class="menu__link">Войти</a>
+          <a href="#" class="menu__link">Выйти</a>
         </li>
       </ul>
     </div>
