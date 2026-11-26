@@ -10,8 +10,8 @@
         </svg>
       </div>
     </div>
-    <div class="content__playlist playlist">
-      <Track v-for="track in tracks" :key="track.id" :track="track" />
+    <div class="content__playlist playlist scrollbar-hidden">
+      <Track v-for="track in tracks" :key="track._id ?? track.id" :track="track" />
     </div>
   </div>
 </template>
@@ -44,13 +44,15 @@ defineProps({
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  max-height: calc(100vh - 455px);
+  min-height: 120px;
 }
 
 .playlist-title__col {
   font-size: 14px;
   line-height: 24px;
   letter-spacing: 2px;
-  color: #696969;
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
@@ -58,7 +60,7 @@ defineProps({
   width: 12px;
   height: 12px;
   fill: transparent;
-  stroke: #696969;
+  stroke: var(--text-muted);
 }
 
 .col01 {
@@ -76,5 +78,29 @@ defineProps({
 .col04 {
   width: 60px;
   text-align: end;
+}
+
+@media (max-width: 1760px) {
+  .col01 {
+    width: 42%;
+  }
+
+  .col02 {
+    width: 27%;
+  }
+
+  .col03 {
+    width: 20%;
+  }
+}
+
+@media (max-width: 720px) {
+  .content__title {
+    display: none;
+  }
+
+  .content__playlist {
+    max-height: calc(100vh - 402px);
+  }
 }
 </style>

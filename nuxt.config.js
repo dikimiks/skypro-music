@@ -1,3 +1,4 @@
+
 export default defineNuxtConfig({
   compatibilityDate: '2026-09-27',
 
@@ -5,16 +6,16 @@ export default defineNuxtConfig({
     enabled: false,
   },
 
-  modules: ['@pinia/nuxt'],
+  modules: ['@pinia/nuxt', '@nuxt/image'],
+
+  css: ['~/assets/css/global.css'],
 
   app: {
     head: {
-      link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+      script: [
         {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap',
+          src: 'https://mcp.figma.com/mcp/html-to-design/capture.js',
+          async: true,
         },
       ],
     },
