@@ -4,18 +4,26 @@
     <div v-for="filter in filters" :key="filter.key" class="filter__group">
       <button
         type="button"
-        :class="['filter__button', filter.className, '_btn-text', { 'filter__button_active': filter.value }]"
+        :class="['filter__button', filter.className, '_btn-text', { 'filter__button_active': filter.value.length }]"
         :aria-expanded="openFilter === filter.key"
         :aria-controls="`filter-options-${filter.key}`"
         @click="toggleFilter(filter.key)"
       >
-        {{ filter.value || filter.label }}
+        {{ filter.value.length === 1 ? filter.value[0] : filter.label }}
+        <span
+          v-if="filter.value.length"
+          class="filter__count"
+          :aria-label="selectionLabel(filter.value.length)"
+        >
+          {{ filter.value.length }}
+        </span>
       </button>
       <ul
         v-if="openFilter === filter.key"
         :id="`filter-options-${filter.key}`"
-        class="filter__options"
+        class="filter__options scrollbar-hidden"
         role="listbox"
+        aria-multiselectable="true"
         :aria-label="`Фильтр по ${filter.label}`"
       >
         <li v-for="option in filter.options" :key="option">
@@ -23,8 +31,8 @@
             type="button"
             class="filter__option"
             role="option"
-            :aria-selected="filter.value === option"
-            @click="selectOption(filter, option)"
+            :aria-selected="filter.value.includes(option)"
+            @click="toggleOption(filter, option)"
           >
             {{ option }}
           </button>
@@ -49,16 +57,16 @@ const props = defineProps({
     default: () => [],
   },
   author: {
-    type: String,
-    default: '',
+    type: [Array, String],
+    default: () => [],
   },
   year: {
-    type: String,
-    default: '',
+    type: [Array, String],
+    default: () => [],
   },
   genre: {
-    type: String,
-    default: '',
+    type: [Array, String],
+    default: () => [],
   },
 })
 
@@ -70,21 +78,21 @@ const filters = computed(() => [
     key: 'author',
     label: 'исполнителю',
     options: props.authors,
-    value: props.author,
+    value: normalizeSelection(props.author),
     className: 'button-author',
   },
   {
     key: 'year',
     label: 'году выпуска',
     options: props.years,
-    value: props.year,
+    value: normalizeSelection(props.year),
     className: 'button-year',
   },
   {
     key: 'genre',
     label: 'жанру',
     options: props.genres,
-    value: props.genre,
+    value: normalizeSelection(props.genre),
     className: 'button-genre',
   },
 ])
@@ -93,9 +101,20 @@ function toggleFilter(key) {
   openFilter.value = openFilter.value === key ? '' : key
 }
 
-function selectOption(filter, option) {
-  emit(`update:${filter.key}`, filter.value === option ? '' : option)
-  openFilter.value = ''
+function normalizeSelection(value) {
+  if (Array.isArray(value)) return value
+  return value ? [value] : []
+}
+
+function toggleOption(filter, option) {
+  const nextValue = filter.value.includes(option)
+    ? filter.value.filter((selected) => selected !== option)
+    : [...filter.value, option]
+  emit(`update:${filter.key}`, nextValue)
+}
+
+function selectionLabel(count) {
+  return `Выбрано ${count} ${count === 1 ? 'значение' : 'значения'}`
 }
 </script>
 
@@ -123,16 +142,44 @@ function selectOption(filter, option) {
 .filter__button {
   font-size: 16px;
   line-height: 24px;
-  border: 1px solid #ffffff;
+  height: 39px;
+  border: 1px solid var(--text-primary);
   border-radius: 60px;
   padding: 6px 20px;
+  background: transparent;
+  color: var(--text-primary);
   font-family: inherit;
+  white-space: nowrap;
   cursor: pointer;
 }
 
+.filter__count {
+  display: inline-flex;
+  min-width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  padding: 0 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.button-author,
+.button-year {
+  min-width: 144px;
+}
+
+.button-genre {
+  min-width: 91px;
+}
+
 .filter__button_active {
-  border-color: #ad61ff;
-  color: #d9b6ff;
+  border-color: var(--accent);
+  color: var(--accent-light);
 }
 
 .filter__options {
@@ -147,8 +194,8 @@ function selectOption(filter, option) {
   margin: 0;
   padding: 8px;
   list-style: none;
-  background-color: #2e2e2e;
-  border: 1px solid #4e4e4e;
+  background-color: var(--bg-menu);
+  border: 1px solid var(--border);
   border-radius: 12px;
 }
 
@@ -158,7 +205,7 @@ function selectOption(filter, option) {
   padding: 6px 12px;
   border: 0;
   background: transparent;
-  color: #ffffff;
+  color: var(--text-primary);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -166,16 +213,44 @@ function selectOption(filter, option) {
 
 .filter__option:hover,
 .filter__option[aria-selected="true"] {
-  color: #d9b6ff;
+  color: var(--accent-light);
 }
 
 ._btn-text:hover {
-  border-color: #d9b6ff;
-  color: #d9b6ff;
+  border-color: var(--accent-light);
+  color: var(--accent-light);
 }
 
 ._btn-text:active {
-  border-color: #ad61ff;
-  color: #ad61ff;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .centerblock__filter {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+
+  .filter__title {
+    width: 100%;
+  }
+
+  .filter__group:not(:last-child) {
+    margin-right: 0;
+  }
+
+  .filter__button {
+    height: 36px;
+    padding: 5px 14px;
+  }
+
+  .button-author,
+  .button-year,
+  .button-genre {
+    width: auto;
+  }
 }
 </style>

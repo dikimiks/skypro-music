@@ -1,15 +1,16 @@
 <template>
-  <div class="wrapper">
-    <div class="container">
-      <main class="main">
-        <Navbar />
-
-        <section class="main__centerblock centerblock">
+  <section class="main__centerblock centerblock">
           <div class="centerblock__search search">
             <svg class="search__svg">
               <use href="/img/icon/sprite.svg#icon-search"></use>
             </svg>
-            <input class="search__text" type="search" placeholder="Поиск" name="search" />
+            <input
+              v-model="search"
+              class="search__text"
+              type="search"
+              placeholder="Поиск"
+              name="search"
+            />
           </div>
 
           <h2 class="centerblock__h2">Треки</h2>
@@ -26,50 +27,50 @@
           <p v-else-if="requestFailed" class="centerblock__status" role="alert">
             Не удалось загрузить треки. Попробуйте обновить страницу.
           </p>
+          <p v-else-if="!filteredTracks.length" class="centerblock__status" role="status">
+            По вашему запросу ничего не найдено.
+          </p>
           <Playlist v-else :tracks="filteredTracks" />
-        </section>
-
-        <aside class="main__sidebar sidebar">
-          <div class="sidebar__personal">
-            <div class="sidebar__personal-name">Пользователь</div>
-            <div class="sidebar__icon"></div>
-          </div>
-          <div class="sidebar__block">
-            <ul class="sidebar__list">
-              <li class="sidebar__item">
-                <a href="#" class="sidebar__link">
-                  <img class="sidebar__img" src="/img/playlist01.png" alt="Плейлист" />
-                </a>
-              </li>
-              <li class="sidebar__item">
-                <a href="#" class="sidebar__link">
-                  <img class="sidebar__img" src="/img/playlist02.png" alt="Плейлист" />
-                </a>
-              </li>
-              <li class="sidebar__item">
-                <a href="#" class="sidebar__link">
-                  <img class="sidebar__img" src="/img/playlist03.png" alt="Плейлист" />
-                </a>
-              </li>
-            </ul>
-          </div>
-        </aside>
-      </main>
-
-      <PlayerBar />
-      <footer class="footer"></footer>
-    </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
+import { useFiltersStore } from '~/store/filters'
+import { usePlayerStore } from '~/store/player'
+import {
+  filterTracks,
+  getTrackAuthors,
+  getTrackGenres,
+  getTrackYears,
+} from '~/utils/music'
+
+useHead({
+  title: 'Музыкальный сервис',
+  meta: [{ name: 'description', content: 'Главная подборка музыкальных треков' }],
+})
+
 const { data: response, pending, error } = await useFetch(
   'https://webdev-music-003b5b991590.herokuapp.com/catalog/track/all/',
 )
+const filters = useFiltersStore()
+const player = usePlayerStore()
 
-const selectedAuthor = ref('')
-const selectedYear = ref('')
-const selectedGenre = ref('')
+const selectedAuthor = computed({
+  get: () => filters.author,
+  set: (value) => filters.setAuthor(value),
+})
+const selectedYear = computed({
+  get: () => filters.year,
+  set: (value) => filters.setYear(value),
+})
+const selectedGenre = computed({
+  get: () => filters.genre,
+  set: (value) => filters.setGenre(value),
+})
+const search = computed({
+  get: () => filters.search,
+  set: (value) => filters.setSearch(value),
+})
 
 const tracks = computed(() => {
   const data = response.value?.data
@@ -83,84 +84,55 @@ const requestFailed = computed(
     !Array.isArray(response.value?.data),
 )
 
-const authors = computed(() =>
-  [...new Set(
-    tracks.value
-      .map((track) => track.author)
-      .filter((author) => typeof author === 'string' && author.trim()),
-  )].sort((a, b) => a.localeCompare(b)),
-)
-
-const years = computed(() =>
-  [...new Set(
-    tracks.value
-      .map((track) =>
-        typeof track.release_date === 'string' &&
-        /^\d{4}-\d{2}-\d{2}$/.test(track.release_date)
-          ? track.release_date.slice(0, 4)
-          : '',
-      )
-      .filter(Boolean),
-  )].sort((a, b) => Number(b) - Number(a)),
-)
-
-const genres = computed(() =>
-  [...new Set(
-    tracks.value
-      .flatMap((track) => (Array.isArray(track.genre) ? track.genre : []))
-      .filter((genre) => typeof genre === 'string' && genre.trim()),
-  )].sort((a, b) => a.localeCompare(b)),
-)
-
+const authors = computed(() => getTrackAuthors(tracks.value))
+const years = computed(() => getTrackYears(tracks.value))
+const genres = computed(() => getTrackGenres(tracks.value))
 const filteredTracks = computed(() =>
-  tracks.value.filter(
-    (track) =>
-      (!selectedAuthor.value || track.author === selectedAuthor.value) &&
-      (!selectedYear.value ||
-        (typeof track.release_date === 'string' &&
-          track.release_date.startsWith(selectedYear.value))) &&
-      (!selectedGenre.value ||
-        (Array.isArray(track.genre) && track.genre.includes(selectedGenre.value))),
-  ),
+  filterTracks(tracks.value, {
+    author: filters.author,
+    year: filters.year,
+    genre: filters.genre,
+    search: filters.search,
+  }),
 )
+
+watchEffect(() => {
+  if (!pending.value && !requestFailed.value) {
+    player.setQueue(filteredTracks.value)
+  }
+})
 </script>
 
 <style scoped>
-@font-face {
-  font-family: "StratosSkyeng";
-  src: url("/fonts/StratosSkyeng.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-}
-
 .wrapper {
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
-  background-color: #383838;
-  color: #ffffff;
+  overflow-x: clip;
+  background-color: var(--bg-shell);
+  color: var(--text-primary);
   font-family: "StratosSkyeng", sans-serif;
 }
 
 .container {
   max-width: 1920px;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0 auto;
   position: relative;
-  background-color: #181818;
+  padding-bottom: 78px;
+  background-color: var(--bg-main);
 }
 
 .main {
-  min-height: 100%;
+  min-height: calc(100vh - 78px);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
 
 .main__centerblock {
-  width: auto;
-  flex-grow: 3;
-  padding: 20px 40px 20px 50px;
+  min-width: 0;
+  flex: 1 1 auto;
+  padding: 20px 40px 0 50px;
 }
 
 .main__sidebar {
@@ -169,8 +141,9 @@ const filteredTracks = computed(() =>
 }
 
 .centerblock__search {
-  width: 100%;
-  border-bottom: 1px solid #4e4e4e;
+  width: calc(100% + 118px);
+  height: 52px;
+  border-bottom: 1px solid var(--border);
   margin-bottom: 50px;
   display: flex;
   align-items: center;
@@ -186,14 +159,14 @@ const filteredTracks = computed(() =>
   font-size: 60px;
   line-height: 64px;
   letter-spacing: -0.78px;
-  margin: 0 0 45px;
+  margin: 0 0 53px;
 }
 
 .search__svg {
   width: 17px;
   height: 17px;
   margin-right: 5px;
-  stroke: #ffffff;
+  stroke: var(--text-primary);
   fill: transparent;
   flex-shrink: 0;
 }
@@ -203,15 +176,16 @@ const filteredTracks = computed(() =>
   background-color: transparent;
   border: none;
   outline: none;
-  padding: 13px 10px 14px;
+  height: 52px;
+  padding: 14px 10px 16px;
   font: inherit;
   font-size: 16px;
-  line-height: 24px;
-  color: #ffffff;
+  line-height: 18px;
+  color: var(--text-primary);
 }
 
 .search__text::placeholder {
-  color: #ffffff;
+  color: var(--text-primary);
   opacity: 1;
 }
 
@@ -225,14 +199,14 @@ const filteredTracks = computed(() =>
 .sidebar__personal-name {
   font-size: 16px;
   line-height: 24px;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-right: 16px;
 }
 
 .sidebar__icon {
   width: 43px;
   height: 43px;
-  background-color: #313131;
+  background-color: var(--bg-muted);
   border-radius: 50%;
   cursor: pointer;
 }
@@ -270,5 +244,37 @@ const filteredTracks = computed(() =>
   display: block;
   width: 100%;
   height: auto;
+}
+
+@media (max-width: 1100px) {
+  .main__centerblock {
+    padding-right: 28px;
+  }
+
+  .centerblock__search {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1440px) and (min-width: 1101px) {
+  .centerblock__search {
+    width: calc(100% + 72px);
+  }
+}
+
+@media (max-width: 720px) {
+  .main__centerblock {
+    padding: 16px 16px 0;
+  }
+
+  .centerblock__search {
+    margin-bottom: 32px;
+  }
+
+  .centerblock__h2 {
+    margin-bottom: 28px;
+    font-size: 40px;
+    line-height: 44px;
+  }
 }
 </style>
