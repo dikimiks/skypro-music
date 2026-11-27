@@ -29,18 +29,43 @@ describe('Track', () => {
     expect(usePlayerStore().currentTrack?._id).toBe(7)
   })
 
-  it('keeps the current-track indicator visible while paused', async () => {
+  it('shows a centered dot instead of a note for the current track', async () => {
     const player = usePlayerStore()
     const track = { _id: 7, name: 'Song', duration_in_seconds: 60 }
     player.currentTrack = track
     player.isPlaying = true
     const wrapper = mount(Track, { props: { track } })
 
-    expect(wrapper.find('.track__indicator.is-playing').exists()).toBe(true)
+    expect(wrapper.find('.track__title-image .playing-dot').exists()).toBe(true)
+    expect(wrapper.find('.track__title-image .track__title-svg').exists()).toBe(false)
+    expect(wrapper.find('.playing-dot.is-paused').exists()).toBe(false)
     player.isPlaying = false
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('.track__indicator').exists()).toBe(true)
-    expect(wrapper.find('.track__indicator.is-playing').exists()).toBe(false)
+    expect(wrapper.find('.playing-dot').exists()).toBe(true)
+    expect(wrapper.find('.playing-dot.is-paused').exists()).toBe(true)
+  })
+
+  it('plays the selected track from both the indicator and title', async () => {
+    const player = usePlayerStore()
+    const track = { _id: 7, name: 'Song', duration_in_seconds: 60 }
+    const wrapper = mount(Track, { props: { track } })
+
+    await wrapper.find('.track__title-image').trigger('click')
+    expect(player.currentTrack?._id).toBe(7)
+    player.isLoadingSource = false
+    player.audioSource = track.track_file || 'song.mp3'
+    await wrapper.find('.track__title-link').trigger('click')
+    expect(player.playRequestVersion).toBe(1)
+  })
+
+  it('shows a note for tracks other than the current track', () => {
+    const player = usePlayerStore()
+    player.currentTrack = { _id: 7 }
+    const wrapper = mount(Track, { props: { track: { _id: 8, name: 'Other' } } })
+
+    expect(wrapper.find('.track__title-image .track__title-svg use').attributes('href'))
+      .toContain('#icon-note')
+    expect(wrapper.find('.playing-dot').exists()).toBe(false)
   })
 
   it('reflects the shared favorite state on the track heart', () => {

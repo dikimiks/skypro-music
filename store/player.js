@@ -6,6 +6,7 @@ export const usePlayerStore = defineStore('player', {
     trackQueue: [],
     originalQueue: [],
     selectionVersion: 0,
+    playRequestVersion: 0,
     audioSource: '',
     isPlaying: false,
     isLoadingSource: false,
@@ -36,14 +37,19 @@ export const usePlayerStore = defineStore('player', {
       const trackId = track?._id ?? track?.id
       const currentTrackId = this.currentTrack?._id ?? this.currentTrack?.id
 
-      if (
+      const isSameTrack =
         trackId !== undefined &&
         trackId !== null &&
         currentTrackId !== undefined &&
         currentTrackId !== null &&
-        String(currentTrackId) === String(trackId) &&
-        (this.isLoadingSource || (this.audioSource && !this.error))
-      ) {
+        String(currentTrackId) === String(trackId)
+
+      if (isSameTrack && this.isLoadingSource) {
+        return
+      }
+
+      if (isSameTrack && this.audioSource && !this.error) {
+        this.playRequestVersion += 1
         return
       }
 

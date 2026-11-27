@@ -8,17 +8,23 @@
           'is-playing': isCurrentTrack && player.isPlaying,
         }"
       >
-        <div class="track__title-image">
+        <button
+          type="button"
+          class="track__title-image"
+          :class="{ 'is-current': isCurrentTrack }"
+          :aria-label="`Воспроизвести ${track.name}`"
+          @click="player.selectTrack(track)"
+        >
           <span
             v-if="isCurrentTrack"
-            class="track__indicator"
-            :class="{ 'is-playing': player.isPlaying }"
+            class="playing-dot"
+            :class="{ 'is-paused': !player.isPlaying }"
             aria-hidden="true"
           ></span>
-          <svg class="track__title-svg">
+          <svg v-else class="track__title-svg" aria-hidden="true">
             <use href="/img/icon/sprite.svg#icon-note"></use>
           </svg>
-        </div>
+        </button>
         <div class="track__title-text">
           <a class="track__title-link" href="#" @click.prevent="player.selectTrack(track)">
             {{ track.name }}
@@ -108,43 +114,43 @@ async function toggleFavorite() {
   width: 51px;
   height: 51px;
   padding: 16px;
+  border: 0;
   background: var(--bg-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 17px;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
-.track__indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 1;
-  width: 21px;
-  height: 21px;
-  box-sizing: border-box;
-  border-radius: 50%;
+.track__title-image.is-current {
   border: 1px solid #000;
-  background: #b672ff;
-  box-shadow: 0 0 4px rgba(182, 114, 255, 0.6);
-  transform: translate(-50%, -50%);
+  background: #313131;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.track__indicator.is-playing {
-  animation: track-indicator-pulse 1.2s ease-in-out infinite;
+.playing-dot {
+  width: 16px;
+  height: 16px;
+  background-color: #b672ff;
+  border-radius: 8px;
+  display: block;
+  animation: bubble_out 0.6s ease-in-out infinite both;
 }
 
-@keyframes track-indicator-pulse {
+@keyframes bubble_out {
   0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
+  to {
+    transform: scale(0.5);
   }
-
   50% {
-    opacity: 0.35;
-    transform: translate(-50%, -50%) scale(0.75);
+    transform: scale(1);
   }
+}
+
+.playing-dot.is-paused {
+  animation: none;
 }
 
 .track__title-svg {
