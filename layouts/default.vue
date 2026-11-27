@@ -46,7 +46,6 @@
                     class="sidebar__img"
                     :src="playlist.image"
                     :alt="playlist.label"
-                    placeholder="/img/logo.png"
                   />
                 </NuxtLink>
               </li>

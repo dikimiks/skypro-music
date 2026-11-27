@@ -7,6 +7,7 @@ export function useAudioPlayer() {
   watch(
     () => player.selectionVersion,
     async () => {
+      const selectionVersion = player.selectionVersion
       const audio = audioRef.value
       audio?.pause()
       audio?.removeAttribute('src')
@@ -27,9 +28,20 @@ export function useAudioPlayer() {
 
       player.audioSource = source
       await nextTick()
-      audioRef.value?.load()
+      if (selectionVersion !== player.selectionVersion) {
+        return
+      }
+
+      const selectedAudio = audioRef.value
+      selectedAudio?.load()
+      await startPlayback(selectionVersion)
     },
     { flush: 'post' },
+  )
+
+  watch(
+    () => player.playRequestVersion,
+    () => startPlayback(player.selectionVersion),
   )
 
   watch(
@@ -63,6 +75,24 @@ export function useAudioPlayer() {
     player.error = ''
   }
 
+  async function startPlayback(selectionVersion) {
+    const audio = audioRef.value
+    if (!audio || !player.audioSource || !audio.paused) {
+      return
+    }
+
+    try {
+      await audio.play()
+    } catch (error) {
+      if (selectionVersion !== player.selectionVersion || error?.name === 'AbortError') {
+        return
+      }
+
+      player.isPlaying = false
+      player.error = 'Не удалось начать воспроизведение.'
+    }
+  }
+
   function onPause() {
     player.isPlaying = false
   }
@@ -91,12 +121,7 @@ export function useAudioPlayer() {
     }
 
     if (audio.paused) {
-      try {
-        await audio.play()
-      } catch {
-        player.isPlaying = false
-        player.error = 'Не удалось начать воспроизведение.'
-      }
+      await startPlayback(player.selectionVersion)
     } else {
       audio.pause()
     }

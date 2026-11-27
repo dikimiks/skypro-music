@@ -142,7 +142,7 @@
         @loadedmetadata="onLoadedMetadata"
         @durationchange="onLoadedMetadata"
         @timeupdate="onTimeUpdate"
-        @play="onPlay"
+        @playing="onPlay"
         @pause="onPause"
         @ended="onEnded"
         @error="onAudioError"
