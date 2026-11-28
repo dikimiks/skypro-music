@@ -103,7 +103,7 @@ async function logout() {
   overflow-x: clip;
   background-color: var(--bg-shell);
   color: var(--text-primary);
-  font-family: "StratosSkyeng", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 .container {

@@ -8,7 +8,7 @@ export default defineNuxtConfig({
 
   modules: ['@pinia/nuxt', '@nuxt/image'],
 
-  css: ['~/assets/css/global.css'],
+  css: ['@fontsource/montserrat/400.css', '~/assets/css/global.css'],
 
   app: {
     head: {

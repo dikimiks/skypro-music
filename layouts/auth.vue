@@ -13,7 +13,7 @@
   padding: 24px;
   background: #181818;
   color: #ffffff;
-  font-family: "StratosSkyeng", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 @media (max-width: 440px) {

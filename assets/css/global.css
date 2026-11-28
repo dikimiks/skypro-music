@@ -4,14 +4,6 @@
   box-sizing: border-box;
 }
 
-@font-face {
-  font-family: "StratosSkyeng";
-  src: url("/fonts/StratosSkyeng.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   color-scheme: dark;
   --bg-main: #181818;
@@ -55,7 +47,7 @@ body,
 body {
   background: var(--bg-main);
   color: var(--text-primary);
-  font-family: "StratosSkyeng", sans-serif;
+  font-family: "Montserrat", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
